@@ -1,12 +1,12 @@
-import Common.*
 import cats.effect.{IO, IOApp}
 import cats.syntax.foldable.*
 import cats.syntax.parallel.*
+import common.*
 
 object MainUsingCatsParTraverse extends IOApp.Simple:
 
   override def run: IO[Unit] =
-    IO(getLinesFrom(warAndPeaceURL))
+    IO(getLinesFromWarAndPeaceBook())
       .flatMap( maybeLines =>
         maybeLines.fold(
           error => IO(handleUnsuccessfulDownload(error)),
@@ -19,7 +19,7 @@ object MainUsingCatsParTraverse extends IOApp.Simple:
 
   def find(word: String, lines: Vector[String]): IO[String] =
     lines
-      .grouped(10_000)
+      .grouped(15_000)
       .toVector
       .parTraverse(searchFor(word))
       .map(_.combineAll)

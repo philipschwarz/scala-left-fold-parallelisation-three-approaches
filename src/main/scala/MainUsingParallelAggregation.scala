@@ -1,12 +1,11 @@
-import Common.*
+import common.*
 
 import scala.collection.parallel.CollectionConverters.*
-import scala.util.chaining.*
 
 @main
 def mainUsingParallelAggregation(): Unit =
 
-  getLinesFrom(bookURL = warAndPeaceURL)
+  getLinesFromWarAndPeaceBook()
     .fold(
       error => handleUnsuccessfulDownload(error),
       lines =>
@@ -16,7 +15,4 @@ def mainUsingParallelAggregation(): Unit =
     )
 
   def find(word: String, lines: Vector[String]): String =
-    lines.par.aggregate("")(
-      seqop = accumulateLinesContaining(word),
-      combop = _ ++ _
-    )
+    lines.par.aggregate("")(seqop = accumulateLinesContaining(word), combop = _++_)
