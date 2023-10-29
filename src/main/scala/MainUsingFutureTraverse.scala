@@ -1,34 +1,24 @@
-import GetWarAndPeace.*
+import Common.*
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 import scala.util.chaining.*
+import cats.syntax.foldable.*
 
 @main
 def mainUsingFutureTraverse(): Unit =
 
-  import scala.concurrent.ExecutionContext.Implicits.global
+  find(word = "fantastic", lines = getLinesFrom(bookURL = warAndPeaceURL))
+    .tap(announceMatchingLines)
 
-  def findLinesContaining(keyword: String)(lines: Vector[String]): Future[String] =
-    Future
-      .traverse(lines.grouped(1_000))(findAndConcatenateLinesContaining(keyword))
-      .map(combine)
-
-  def findAndConcatenateLinesContaining(keyword: String)(lines: Vector[String]): Future[String] =
-    Future {
-      lines.foldLeft("") {
-        (acc, line) =>
-         if line.matches(s".*$keyword.*") then s"$acc\n'$line'" else acc
-      }
-    }
-
-  def combine: Iterator[String] => String = {
-    _.foldLeft("")(_ ++ _)
-  }
-
-  Await
-    .result(
-      Future{ getLinesFromWarAndPeace() }.flatMap(findLinesContaining("fantastic")),
+  def find(word: String, lines: Vector[String]): String =
+    Await.result(
+      Future.traverse(lines.grouped(10_000))(searchFor(word)),
       Duration.Inf
-    )
-    .tap(lines => println(s"Here are the matching lines: $lines"))
+    ).toList.combineAll
+
+  def searchFor(word: String)(lines: Vector[String]): Future[String] =
+    Future :
+      lines.foldLeft("") :
+        accumulateLinesContaining(word)
