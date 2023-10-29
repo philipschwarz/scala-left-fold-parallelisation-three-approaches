@@ -14,11 +14,9 @@ def mainUsingFutureTraverse(): Unit =
 
   def find(word: String, lines: Vector[String]): String =
     Await.result(
-      Future.traverse(lines.grouped(10_000))(searchFor(word)),
+      Future.traverse(lines.grouped(10_000).toList)(searchFor(word)),
       Duration.Inf
-    ).toList.combineAll
+    ).combineAll
 
   def searchFor(word: String)(lines: Vector[String]): Future[String] =
-    Future :
-      lines.foldLeft("") :
-        accumulateLinesContaining(word)
+    Future(lines.foldLeft("")(accumulateLinesContaining(word)))

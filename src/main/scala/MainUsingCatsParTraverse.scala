@@ -6,9 +6,9 @@ import cats.syntax.parallel.*
 object MainUsingCatsParTraverse extends IOApp.Simple:
 
   override def run: IO[Unit] =
-    IO( getLinesFrom(warAndPeaceURL) )
-      .flatMap( find(word = "fantastic") )
-      .flatMap( lines => IO(announceMatchingLines(lines)) )
+    IO(getLinesFrom(warAndPeaceURL))
+      .flatMap(find(word = "fantastic"))
+      .flatMap(lines => IO(announceMatchingLines(lines)))
 
   def find(word: String)(lines: Vector[String]): IO[String] =
     lines
@@ -18,7 +18,4 @@ object MainUsingCatsParTraverse extends IOApp.Simple:
       .map(_.combineAll)
 
   def searchFor(word: String)(lines: Vector[String]): IO[String] =
-    IO:
-      lines.foldLeft(""): 
-        accumulateLinesContaining(word)
-
+    IO(lines.foldLeft("")(accumulateLinesContaining(word)))
