@@ -1,5 +1,5 @@
 import scala.io.Source
-import scala.util.Using
+import scala.util.{Try, Using}
 import scala.util.chaining.*
 
 object Common:
@@ -11,15 +11,12 @@ object Common:
    * @return the lines
    * @throws java.lang.IllegalStateException if there is an error downloading 'War and Peace'
    */
-  def getLinesFrom(bookURL:  String): Vector[String] =
+  def getLinesFrom(bookURL:  String): Try[Vector[String]] =
     Using(Source.fromURL(bookURL)) { source =>
       source.getLines.toVector
-    }.fold(
-        error => handleUnsuccessfulDownload(error),
-        lines => lines.tap(announceSuccessfulDownload)
-    )
+    }
 
-  def handleUnsuccessfulDownload(error: Throwable): Vector[String] =
+  def handleUnsuccessfulDownload[A](error: Throwable): A =
     throw IllegalStateException("Failed to download 'War and Peace':", error)
 
   def announceSuccessfulDownload(lines: Vector[String]): Unit =

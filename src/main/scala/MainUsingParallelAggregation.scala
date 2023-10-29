@@ -6,8 +6,14 @@ import scala.util.chaining.*
 @main
 def mainUsingParallelAggregation(): Unit =
 
-  find(word = "fantastic", lines = getLinesFrom(bookURL = warAndPeaceURL))
-    .tap(announceMatchingLines)
+  getLinesFrom(bookURL = warAndPeaceURL)
+    .fold(
+      error => handleUnsuccessfulDownload(error),
+      lines =>
+        announceSuccessfulDownload(lines)
+        val matches = find(word = "fantastic", lines)
+        announceMatchingLines(matches)
+    )
 
   def find(word: String, lines: Vector[String]): String =
     lines.par.aggregate("")(

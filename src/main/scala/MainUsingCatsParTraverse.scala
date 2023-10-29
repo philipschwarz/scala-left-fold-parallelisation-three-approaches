@@ -7,10 +7,17 @@ object MainUsingCatsParTraverse extends IOApp.Simple:
 
   override def run: IO[Unit] =
     IO(getLinesFrom(warAndPeaceURL))
-      .flatMap(find(word = "fantastic"))
-      .flatMap(lines => IO(announceMatchingLines(lines)))
+      .flatMap( maybeLines =>
+        maybeLines.fold(
+          error => IO(handleUnsuccessfulDownload(error)),
+          lines =>
+            IO(announceSuccessfulDownload(lines)) *>
+              find(word = "fantastic", lines)
+                .map(matches => announceMatchingLines(matches))
+        )
+      )
 
-  def find(word: String)(lines: Vector[String]): IO[String] =
+  def find(word: String, lines: Vector[String]): IO[String] =
     lines
       .grouped(10_000)
       .toVector
