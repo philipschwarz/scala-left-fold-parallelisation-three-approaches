@@ -1,32 +1,27 @@
 import GetWarAndPeace.*
 
-import scala.concurrent.Await
-import scala.concurrent.ExecutionContext.Implicits.global
-import cats.effect.{ExitCode, IO, IOApp}
+import cats.effect.{IO, IOApp}
 
-import cats.syntax.parallel._
-import cats.syntax.foldable._
+import cats.syntax.parallel.*
+import cats.syntax.foldable.*
 
-import scala.concurrent.duration.Duration
+object MainUsingCatsParTraverse extends IOApp.Simple:
 
-object Main extends IOApp:
+  override def run: IO[Unit] =
+    IO( getLinesFromWarAndPeace() )
+      .flatMap( findLinesContaining(word = "fantastic") )
+      .flatMap( lines => IO.println(s"Here are the matching lines: $lines") )
 
-  override def run(args: List[String]): IO[ExitCode] =
-    IO.fromFuture(IO(getWarAndPeace()))
-      .map(findLinesContaining("fantastic"))
-      .flatTap(lines => IO(println(s"Here are the matching lines: $lines")))
-      .as(ExitCode.Success)
-
-  def findLinesContaining(keyword: String)(lines: Vector[String]): IO[String] =
+  def findLinesContaining(word: String)(lines: Vector[String]): IO[String] =
     lines
       .grouped(10_000)
       .toVector
-      .parTraverse(findAndConcatenateLinesContaining(keyword))
+      .parTraverse(findAndConcatenateLinesContaining(word))
       .map(_.combineAll)
 
   def findAndConcatenateLinesContaining(keyword: String)(lines: Vector[String]): IO[String] =
     IO {
-      lines.foldLeft("") { (concatenatedLines, line) =>
-        if line.matches(s".*$keyword.*") then s"$concatenatedLines\n'$line'" else concatenatedLines
+      lines.foldLeft("") { (acc, line) =>
+        if line.matches(s".*$keyword.*") then s"$acc\n'$line'" else acc
       }
     }
