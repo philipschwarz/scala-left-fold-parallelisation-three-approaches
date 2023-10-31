@@ -3,7 +3,7 @@ import common.*
 import scala.collection.parallel.CollectionConverters.*
 
 @main
-def mainUsingParallelAggregation(): Unit =
+def runUsingParallelAggregation(): Unit =
 
   getLinesFromWarAndPeaceBook()
     .fold(

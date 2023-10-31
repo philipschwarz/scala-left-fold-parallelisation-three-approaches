@@ -3,12 +3,15 @@ import cats.syntax.foldable.*
 import cats.syntax.parallel.*
 import common.*
 
-object MainUsingCatsParTraverse extends IOApp.Simple:
+object CatsParTraverse extends IOApp.Simple:
 
-  override def run: IO[Unit] =
+  def run: IO[Unit] =
+    runUsingCatsParTraverse
+
+  def runUsingCatsParTraverse: IO[Unit] =
     IO(getLinesFromWarAndPeaceBook())
-      .flatMap( maybeLines =>
-        maybeLines.fold(
+      .flatMap(
+        _.fold(
           error => IO(handleUnsuccessfulDownload(error)),
           lines =>
             IO(announceSuccessfulDownload(lines)) *>
@@ -26,3 +29,4 @@ object MainUsingCatsParTraverse extends IOApp.Simple:
 
   def searchFor(word: String)(lines: Vector[String]): IO[String] =
     IO(lines.foldLeft("")(accumulateLinesContaining(word)))
+
