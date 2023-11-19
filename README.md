@@ -1,0 +1,2 @@
+Code for [Scala Left Fold Parallelisation - Three Approaches](http://fpilluminated.com/assets/scala-left-fold-parallelisation-three-approaches.html).
+<img src="https://fpilluminated.s3.eu-west-2.amazonaws.com/slide-decks/2023-11-19-scala-left-fold-parallelisation-three-approaches/2023-11-19-scala-left-fold-parallelisation-three-approaches-first-slide-large.png">
