@@ -1,5 +1,3 @@
-package common
-
 import cats.Functor
 
 import java.net.URL

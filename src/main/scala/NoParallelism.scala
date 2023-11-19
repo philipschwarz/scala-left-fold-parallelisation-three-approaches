@@ -1,5 +1,3 @@
-import common.*
-
 @main def runWithoutParallelism(word: String = "incredible"): Unit =
 
   println(System.currentTimeMillis())

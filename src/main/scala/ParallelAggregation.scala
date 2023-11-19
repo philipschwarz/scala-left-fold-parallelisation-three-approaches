@@ -1,5 +1,3 @@
-import common.*
-
 import scala.collection.parallel.CollectionConverters.*
 
 @main def runUsingParallelAggregation(word: String = "incredible"): Unit =

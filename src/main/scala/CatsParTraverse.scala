@@ -1,7 +1,6 @@
 import cats.effect.{ExitCode, IO, IOApp}
 import cats.syntax.foldable.*
 import cats.syntax.parallel.*
-import common.*
 
 object CatsParTraverse extends IOApp:
 
